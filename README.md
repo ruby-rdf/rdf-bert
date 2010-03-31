@@ -46,6 +46,44 @@ Remote BERT-RPC repositories support all [RDF::Queryable] methods:
       puts "Found a person: #{statement.subject}"
     end
 
+BERT-RPC Server Examples
+------------------------
+
+You can use either [BERTREM][] or [Ernie][] to setup and run a BERT-RPC
+daemon that serves an RDF repository over the wire. BERTREM is written in
+Ruby, uses [EventMachine][] for its event processing, and is very easy to
+get going with. Ernie is a Ruby/Erlang hybrid developed by and used at
+GitHub, and takes rather more setup to get started with. The following
+examples will all use BERTREM.
+
+### Serving an initially empty in-memory repository over BERT-RPC
+
+    require 'rdf/bert'
+    require 'bertrem'
+
+    repository = RDF::Repository.new
+
+    RDF::BERT::Server.run(repository, :port => 9999)
+
+### Serving an initially seeded in-memory repository over BERT-RPC
+
+    require 'rdf/bert'
+    require 'bertrem'
+
+    repository = RDF::Repository.load('/path/to/data.nt')
+
+    RDF::BERT::Server.run(repository, :port => 9999)
+
+### Proxying a local or remote Sesame HTTP repository over BERT-RPC
+
+    require 'rdf/bert'
+    require 'rdf/sesame'
+    require 'bertrem'
+
+    sesame = RDF::Sesame::Server.new("http://localhost:8080/openrdf-sesame")
+
+    RDF::BERT::Server.run(sesame.repository(:SYSTEM), :port => 9999)
+
 Protocol Description
 --------------------
 
@@ -302,8 +340,7 @@ Dependencies
 
 * [RDF.rb](http://rubygems.org/gems/rdf) (>= 0.1.3)
 * [BERT-RPC](http://rubygems.org/gems/bertrpc) (>= 1.3.0) for RPC client usage
-* [BERTREM](http://rubygems.org/gems/bertrem) or
-  [Ernie](http://rubygems.org/gems/ernie) for RPC server usage
+* [BERTREM][] (>= 0.0.7) or [Ernie][] for RPC server usage
 
 Installation
 ------------
@@ -343,6 +380,9 @@ information, see <http://unlicense.org/> or the accompanying UNLICENSE file.
 [RDF::Queryable]:  http://rdf.rubyforge.org/RDF/Queryable.html
 [BERT-RPC]:        http://bert-rpc.org/
 [GitHub]:          http://github.com/
+[BERTREM]:         http://rubygems.org/gems/bertrem
+[Ernie]:           http://rubygems.org/gems/ernie
+[EventMachine]:    http://rubyeventmachine.com/
 [Erlang]:          http://en.wikipedia.org/wiki/Erlang_(programming_language)
 [S-expression]:    http://en.wikipedia.org/wiki/S-expression
 [N-Triples]:       http://en.wikipedia.org/wiki/N-Triples
