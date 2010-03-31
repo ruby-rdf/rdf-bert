@@ -3,7 +3,8 @@ BERT-RPC Proxy for RDF.rb
 
 This is an [RDF.rb][] plugin that adds support for proxying RDF
 [repository][RDF::Repository] operations over the simple and efficient
-[BERT-RPC][] binary protocol developed and open-sourced by [GitHub][].
+[Erlang][]-compatible [BERT-RPC][] binary protocol specified and
+open-sourced by [GitHub][].
 
 * <http://github.com/bendiken/rdf-bert>
 
@@ -310,5 +311,6 @@ information, see <http://unlicense.org/> or the accompanying UNLICENSE file.
 [RDF::Repository]: http://rdf.rubyforge.org/RDF/Repository.html
 [BERT-RPC]:        http://bert-rpc.org/
 [GitHub]:          http://github.com/
+[Erlang]:          http://en.wikipedia.org/wiki/Erlang_(programming_language)
 [S-expression]:    http://en.wikipedia.org/wiki/S-expression
 [N-Triples]:       http://en.wikipedia.org/wiki/N-Triples
