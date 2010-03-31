@@ -108,9 +108,10 @@ frees the developer to actually get things done.
   supports caching directives, asynchronous operations, and both call and
   response streaming.
 
-For more information on BERT and BERT-RPC, see the original developers' blog
-posts:
+For more information on BERT and BERT-RPC, see GitHub cofounder Tom
+Preston-Werner's RubyConf 2009 presentation and the related blog posts:
 
+* <http://bit.ly/rubyconf2009-bert-ernie-ruby-erlang-presentation>
 * <http://github.com/blog/530-how-we-made-github-fast>
 * <http://github.com/blog/531-introducing-bert-and-bert-rpc>
 * <http://github.com/blog/606-announcing-ernie-2-0-and-2-1>
