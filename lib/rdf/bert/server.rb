@@ -1,12 +1,23 @@
 module RDF; module BERT
   ##
   class Server
-    def self.start(host = 'localhost', port = 9999)
+    def self.run(repository = nil, options = {})
       require 'eventmachine' unless defined?(::EM)
+
+      ::EM.run do
+        self.start(repository, options)
+      end
+    end
+
+    def self.start(repository = nil, options = {})
       require 'bertrem' unless defined?(::BERTREM)
 
+      repo = repository || RDF::Repository.new
+      host = options[:host] || '0.0.0.0'
+      port = options[:port] || 9999
+
       EM.run do
-        server = self.new(RDF::Repository.new)
+        server = self.new(repo)
         BERTREM::Server.mod(:rdf, lambda do
           self.public_instance_methods(false).each do |method_name|
             BERTREM::Server.fun(method_name.to_sym, server.method(method_name.to_sym))
