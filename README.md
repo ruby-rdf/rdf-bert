@@ -87,14 +87,14 @@ examples will all use BERTREM.
 Protocol Description
 --------------------
 
-BERT and BERT-RPC are an attempt to specify a flexible binary serialization
-and RPC protocol that are compatible with the philosophies of dynamic
-languages such as Ruby, Python, Perl, JavaScript, Erlang, Lua, etc. BERT
-aims to be as simple as possible while maintaining support for the advanced
-data types we have come to know and love. BERT-RPC is designed to work
-seamlessly within a dynamic/agile development workflow. The BERT-RPC
-philosophy is to eliminate extraneous type checking, IDL specification, and
-code generation. This frees the developer to actually get things done.
+BERT and BERT-RPC specify a flexible binary serialization and an RPC
+protocol compatible with the philosophies of dynamic languages such as Ruby,
+Python, Perl, JavaScript, Erlang, Lua, etc. BERT aims to be as simple as
+possible while maintaining support for the advanced data types we have come
+to know and love. BERT-RPC is designed to work seamlessly within a
+dynamic/agile development workflow. The BERT-RPC philosophy is to eliminate
+extraneous type checking, IDL specification, and code generation. This
+frees the developer to actually get things done.
 
 * __BERT__ (Binary ERlang Term) is a flexible binary data interchange format
   based on (and compatible with) Erlang's binary serialization format.
