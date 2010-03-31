@@ -2,8 +2,8 @@ BERT-RPC Proxy for RDF.rb
 =========================
 
 This is an [RDF.rb][] plugin that adds support for proxying RDF
-[repository][RDF::Repository] operations over the [BERT-RPC][] binary
-protocol developed by [GitHub][].
+[repository][RDF::Repository] operations over the simple and efficient
+[BERT-RPC][] binary protocol developed and open-sourced by [GitHub][].
 
 * <http://github.com/bendiken/rdf-bert>
 
@@ -19,29 +19,33 @@ Examples
 Protocol Description
 --------------------
 
-From the [BERT and BERT-RPC specification][BERT-RPC]:
+BERT and BERT-RPC are an attempt to specify a flexible binary serialization
+and RPC protocol that are compatible with the philosophies of dynamic
+languages such as Ruby, Python, Perl, JavaScript, Erlang, Lua, etc. BERT
+aims to be as simple as possible while maintaining support for the advanced
+data types we have come to know and love. BERT-RPC is designed to work
+seamlessly within a dynamic/agile development workflow. The BERT-RPC
+philosophy is to eliminate extraneous type checking, IDL specification, and
+code generation. This frees the developer to actually get things done.
 
-> BERT and BERT-RPC are an attempt to specify a flexible binary
-> serialization and RPC protocol that are compatible with the philosophies
-> of dynamic languages such as Ruby, Python, Perl, JavaScript, Erlang, Lua,
-> etc. BERT aims to be as simple as possible while maintaining support for
-> the advanced data types we have come to know and love. BERT-RPC is
-> designed to work seamlessly within a dynamic/agile development workflow.
-> The BERT-RPC philosophy is to eliminate extraneous type checking, IDL
-> specification, and code generation. This frees the developer to actually
-> get things done.
-> 
-> BERT (Binary ERlang Term) is a flexible binary data interchange format
-> based on (and compatible with) Erlang's binary serialization format.
-> 
-> BERPs (Binary ERlang Packets) are used for transmitting BERTs over the
-> wire. A BERP is simply a BERT prepended with a four byte length header,
-> where the highest order bit is first in network order.
-> 
-> BERT-RPC is a transport-layer agnostic protocol for performing remote
-> procedure calls using BERPs as the serialization mechanism. BERT-RPC
-> supports caching directives, asynchronous operations, and both call and
-> response streaming.
+* __BERT__ (Binary ERlang Term) is a flexible binary data interchange format
+  based on (and compatible with) Erlang's binary serialization format.
+
+* __BERPs__ (Binary ERlang Packets) are used for transmitting BERTs over the
+  wire. A BERP is simply a BERT prepended with a four byte length header,
+  where the highest order bit is first in network order.
+
+* __BERT-RPC__ is a transport-layer agnostic protocol for performing remote
+  procedure calls using BERPs as the serialization mechanism. BERT-RPC
+  supports caching directives, asynchronous operations, and both call and
+  response streaming.
+
+For more information on BERT and BERT-RPC, see the original developers' blog
+posts:
+
+* <http://github.com/blog/530-how-we-made-github-fast>
+* <http://github.com/blog/531-introducing-bert-and-bert-rpc>
+* <http://github.com/blog/606-announcing-ernie-2-0-and-2-1>
 
 Protocol Operations
 -------------------
@@ -93,7 +97,7 @@ devoid of statements.
 
 ### `(rdf:exist? graph triple+)`
 
-    >>> (rdf:exists? nil ("_:g123" "http://xmlns.com/foaf/0.1/name" "J. Random Hacker"))
+    >>> (rdf:exist? nil ("_:g123" "http://xmlns.com/foaf/0.1/name" "J. Random Hacker"))
 
 ### `(rdf:query graph pattern)`
 
@@ -115,7 +119,7 @@ devoid of statements.
 Protocol Serialization
 ----------------------
 
-RDF values (blank nodes, URI references and literals) are represented as
+RDF values (blank nodes, URI references, and literals) are represented as
 BERT strings containing the values' canonical [N-Triples][] forms. RDF
 triples are represented as three-term BERT lists containing such BERT
 strings.
@@ -139,9 +143,9 @@ Blank nodes are serialized on the wire as BERT strings of the form
 
 ### URI references
 
-URI references are serialized on the wire as BERT strings beginning with an
-initial `'<'` character, followed by the string representation of the URI
-reference, and terminated by a final `'>'` character:
+URI references are serialized on the wire as BERT strings that begin with an
+initial `'<'` character, are followed by the string representation of the
+URI reference, and are terminated by a final `'>'` character:
 
     RDF::BERT.serialize(RDF::URI.new("http://rdf.rubyforge.org/"))
     #=> "<http://rdf.rubyforge.org/>"
@@ -158,9 +162,10 @@ reference, and terminated by a final `'>'` character:
 ### Plain literals
 
 RDF string literals that do not have an accompanying language tag or
-datatype URI are serialized on the wire as BERT strings beginning with an
-initial `'"'` (double quote) character, followed by the N-Triples escaped
-form of the string literal, and terminated by a final `'"'` character:
+datatype URI are serialized on the wire as BERT strings that begin with an
+initial `'"'` (double quote) character, are followed by the N-Triples
+escaped form of the string literal, and are terminated by a final `'"'`
+character:
 
     RDF::BERT.serialize("Hello, world!")
     #=> "\"Hello, world!\""
@@ -256,6 +261,8 @@ the list terms:
 Documentation
 -------------
 
+<http://rdf.rubyforge.org/bert/>
+
 * {RDF::BERT}
   * {RDF::BERT::Client}
   * {RDF::BERT::Server}
@@ -264,7 +271,9 @@ Dependencies
 ------------
 
 * [RDF.rb](http://rubygems.org/gems/rdf) (>= 0.1.3)
-* [BERT-RPC](http://rubygems.org/gems/bertrpc) (>= 1.3.0)
+* [BERT-RPC](http://rubygems.org/gems/bertrpc) (>= 1.3.0) for RPC client usage
+* [BERTREM](http://rubygems.org/gems/bertrem) or
+  [Ernie](http://rubygems.org/gems/ernie) for RPC server usage
 
 Installation
 ------------
