@@ -119,71 +119,121 @@ Preston-Werner's RubyConf 2009 presentation and the related blog posts:
 Protocol Operations
 -------------------
 
-The following BERT-RPC functions are all specified in the `rdf` module and
+The following functions are all specified in the BERT-RPC `rdf` module and
 are thus shown accordingly prefixed. Function signatures are depicted in
-[S-expression][] syntax. Variadic functions are indicated using `*` to mean
-zero or more such parameters and `+` to mean one or more such parameters.
+[S-expression][] syntax where e.g. `(foo:bar 1 (2) "3")` is equivalent to
+the BERT list `[:foo, :bar, 1, [2], "3"]` in Ruby's syntax. Variadic
+arguments and results are indicated using `*` to mean zero or more such
+elements and `+` to mean one or more such elements.
+
+The functions that have meaningful return values are meant to be used with
+BERT-RPC's synchronous `call` request type. Some operations have no useful
+return value and can thus be used with the asynchronous `cast` request type;
+these operations can also be pipelined for increased performance.
 
 ### `(rdf:graphs)`
 
-Returns a list of all graphs in the repository.
+Returns a list of all named graphs in the repository.
+
+The results list contains URI references and/or blank nodes. Note that the
+results do _not_ include the default graph (represented as `nil` in other
+operations) which is to be considered always present.
 
     >>> (rdf:graphs)
-    <<< (graph*)
+    <<< (resource*)
 
 ### `(rdf:subjects graph*)`
 
-Returns a list of all unique subjects in the given graphs. If no graphs were
-specified, returns all unique subjects in the entire repository.
+Returns a list of all unique triple subjects in the given graphs. If no
+graphs were explicitly specified, returns all unique subjects in the entire
+repository.
 
     >>> (rdf:subjects)
     <<< (resource*)
 
 ### `(rdf:predicates graph*)`
 
-Returns a list of all unique predicates in the given graphs. If no graphs
-were specified, returns all unique predicates in the entire repository.
+Returns a list of all unique triple predicates in the given graphs. If no
+graphs were explicitly specified, returns all unique predicates in the entire
+repository.
 
     >>> (rdf:predicates)
     <<< (resource*)
 
 ### `(rdf:empty? graph*)`
 
-Returns `true` if the given graphs are empty (contain no triples). If no
-graphs were specified, returns `true` in case the entire repository is
-devoid of statements.
+Returns `true` if the given graphs are empty, i.e. they contain no triples.
+If no graphs were explicitly specified, returns `true` in case the entire
+repository is devoid of RDF statements.
 
-    >>> (rdf:empty? "<http://example.org/graph2/>")
-    <<< true
+    >>> (rdf:empty? "<http://example.org/mygraph/>")
+    <<< boolean
     
     >>> (rdf:empty?)
-    <<< false
+    <<< boolean
 
 ### `(rdf:count graph*)`
 
+Returns the number of triples in the given graphs summed. If no graphs were
+explicitly specified, returns the total number of RDF statements in the
+entire repository.
+
     >>> (rdf:count)
-    <<< 42
+    <<< integer
+
+    >>> (rdf:count "_:foobar" "<http://example.org/mygraph/>")
+    <<< integer
 
 ### `(rdf:exist? graph triple+)`
 
-    >>> (rdf:exist? nil ("_:g123" "http://xmlns.com/foaf/0.1/name" "J. Random Hacker"))
+Checks whether one or more triples exist in the given graph. Returns `true`
+if all specified triples exist in the graph, `false` otherwise.
+
+    >>> (rdf:exist? nil ("_:jhacker" "<http://xmlns.com/foaf/0.1/name>" "\"J. Random Hacker\""))
+    <<< boolean
 
 ### `(rdf:query graph pattern)`
 
+Executes a triple pattern query on the given graph, returning the list of
+triples matching the given pattern.
+
     >>> (rdf:query nil (nil nil nil))
+    <<< (triple*)
 
 ### `(rdf:insert graph triple+)`
 
-    >>> (rdf:insert ...)
+Inserts one or more triples into the given graph.
+
+No meaningful result is guaranteed to be returned, making this a suitable
+operation for BERT-RPC's asynchronous `cast` request type.
+
+    >>> (rdf:insert nil ("_:jhacker" "<http://xmlns.com/foaf/0.1/name>" "\"J. Random Hacker\""))
+    <<< nil
 
 ### `(rdf:delete graph triple+)`
 
-    >>> (rdf:delete ...)
+Deletes one or more triples from the given graph.
+
+No meaningful result is guaranteed to be returned, making this a suitable
+operation for BERT-RPC's asynchronous `cast` request type.
+
+    >>> (rdf:delete nil ("_:jhacker" "<http://xmlns.com/foaf/0.1/name>" "\"J. Random Hacker\""))
+    <<< nil
 
 ### `(rdf:clear graph*)`
 
+Deletes any and all triples from the given graphs. If no graphs were
+explicitly specified, deletes any and all RDF statements from the entire
+repository.
+
+No meaningful result is guaranteed to be returned, making this a suitable
+operation for BERT-RPC's asynchronous `cast` request type.
+
     >>> (rdf:clear)
-    >>> (rdf:clear "<http://rdf.rubyforge.org/>")
+    <<< nil
+    
+    >>> (rdf:clear "<http://rubygems.org/>")
+    <<< nil
 
 Protocol Serialization
 ----------------------
