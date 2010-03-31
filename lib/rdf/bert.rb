@@ -9,19 +9,21 @@ module RDF
     autoload :VERSION, 'rdf/bert/version'
 
     ##
-    def self.encode(value)
-      ::BERT.encode(serialize(value))
+    def self.encode(value, options = {})
+      ::BERT.encode(serialize(value, options))
     end
 
     ##
-    def self.serialize(value)
+    def self.serialize(value, options = {})
       case value
         when Array
           serialize_triple(value)
         when RDF::Statement
           serialize_statement(value)
-        else
+        when RDF::Value
           serialize_value(value)
+        else
+          serialize_value(RDF::Literal.new(value, options))
       end
     end
 
