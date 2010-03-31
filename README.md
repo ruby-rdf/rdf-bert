@@ -8,14 +8,43 @@ open-sourced by [GitHub][].
 
 * <http://github.com/bendiken/rdf-bert>
 
-Examples
---------
+BERT-RPC Client Examples
+------------------------
 
     require 'rdf/bert'
 
 ### Connecting to a remote repository over BERT-RPC
 
     repository = RDF::BERT::Client.new(:host => "localhost", :port => 9999)
+
+### Obtaining information about the remote repository
+
+Remote BERT-RPC repositories support all [RDF::Repository] methods:
+
+    repository.empty?
+    repository.count
+
+### Iterating over all RDF statements in the remote repository
+
+Remote BERT-RPC repositories support all [RDF::Enumerable] methods:
+
+    repository.each_statement do |statement|
+      puts statement.inspect
+    end
+
+### Adding new RDF statements to the remote repository
+
+Remote BERT-RPC repositories support all [RDF::Mutable] methods:
+
+    repository << [RDF::Node.new, RDF.type, RDF::FOAF.Person]
+
+### Querying the remote repository for triple patterns
+
+Remote BERT-RPC repositories support all [RDF::Queryable] methods:
+
+    repository.query([nil, RDF.type, RDF::FOAF.Person]) do |statement|
+      puts "Found a person: #{statement.subject}"
+    end
 
 Protocol Description
 --------------------
@@ -309,6 +338,9 @@ information, see <http://unlicense.org/> or the accompanying UNLICENSE file.
 
 [RDF.rb]:          http://rdf.rubyforge.org/
 [RDF::Repository]: http://rdf.rubyforge.org/RDF/Repository.html
+[RDF::Enumerable]: http://rdf.rubyforge.org/RDF/Enumerable.html
+[RDF::Mutable]:    http://rdf.rubyforge.org/RDF/Mutable.html
+[RDF::Queryable]:  http://rdf.rubyforge.org/RDF/Queryable.html
 [BERT-RPC]:        http://bert-rpc.org/
 [GitHub]:          http://github.com/
 [Erlang]:          http://en.wikipedia.org/wiki/Erlang_(programming_language)
