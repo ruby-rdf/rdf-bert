@@ -8,8 +8,8 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.name               = 'rdf-bert'
   gem.homepage           = 'http://rdf.rubyforge.org/'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
-  gem.summary            = 'BERT-RPC proxy for RDF.rb.'
-  gem.description        = 'RDF.rb plugin for proxying repository operations over BERT-RPC.'
+  gem.summary            = 'BERT-RPC repository proxy for RDF.rb.'
+  gem.description        = 'RDF.rb plugin for proxying repository operations over the Erlang-compatible BERT-RPC binary protocol.'
   gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Arto Bendiken']

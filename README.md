@@ -1,5 +1,5 @@
-BERT-RPC Proxy for RDF.rb
-=========================
+BERT-RPC Repository Proxy for RDF.rb
+====================================
 
 This is an [RDF.rb][] plugin that adds support for proxying RDF
 [repository][RDF::Repository] operations over the simple and efficient
