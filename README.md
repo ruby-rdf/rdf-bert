@@ -7,6 +7,35 @@ protocol developed by [GitHub][].
 
 * <http://github.com/bendiken/rdf-bert>
 
+Protocol Description
+--------------------
+
+Protocol Serialization
+----------------------
+
+Protocol Operations
+-------------------
+
+### `(rdf:graphs)`
+
+### `(rdf:subjects graph*)`
+
+### `(rdf:predicates graph*)`
+
+### `(rdf:empty? graph*)`
+
+### `(rdf:count graph*)`
+
+### `(rdf:exist? graph triple+)`
+
+### `(rdf:query graph pattern)`
+
+### `(rdf:insert graph triple+)`
+
+### `(rdf:delete graph triple+)`
+
+### `(rdf:clear graph*)`
+
 Documentation
 -------------
 
