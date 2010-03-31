@@ -19,14 +19,14 @@ BERT-RPC Client Examples
 
 ### Obtaining information about the remote repository
 
-Remote BERT-RPC repositories support all [RDF::Repository] methods:
+Remote BERT-RPC repositories support all [RDF::Repository] methods, e.g.:
 
     repository.empty?
     repository.count
 
 ### Iterating over all RDF statements in the remote repository
 
-Remote BERT-RPC repositories support all [RDF::Enumerable] methods:
+Remote BERT-RPC repositories support all [RDF::Enumerable] methods, e.g.:
 
     repository.each_statement do |statement|
       puts statement.inspect
@@ -34,13 +34,13 @@ Remote BERT-RPC repositories support all [RDF::Enumerable] methods:
 
 ### Adding new RDF statements to the remote repository
 
-Remote BERT-RPC repositories support all [RDF::Mutable] methods:
+Remote BERT-RPC repositories support all [RDF::Mutable] methods, e.g.:
 
     repository << [RDF::Node.new, RDF.type, RDF::FOAF.Person]
 
 ### Querying the remote repository for triple patterns
 
-Remote BERT-RPC repositories support all [RDF::Queryable] methods:
+Remote BERT-RPC repositories support all [RDF::Queryable] methods, e.g.:
 
     repository.query([nil, RDF.type, RDF::FOAF.Person]) do |statement|
       puts "Found a person: #{statement.subject}"
@@ -122,14 +122,14 @@ Protocol Operations
 The following functions are all specified in the BERT-RPC `rdf` module and
 are thus shown accordingly prefixed. Function signatures are depicted in
 [S-expression][] syntax where e.g. `(foo:bar 1 (2) "3")` is equivalent to
-the BERT list `[:foo, :bar, 1, [2], "3"]` in Ruby's syntax. Variadic
-arguments and results are indicated using `*` to mean zero or more such
-elements and `+` to mean one or more such elements.
+the BERT list `[:foo, :bar, 1, [2], "3"]` in Ruby syntax. Variadic arguments
+and results are indicated using `*` to mean zero or more such elements and
+`+` to mean one or more such elements.
 
 The functions that have meaningful return values are meant to be used with
 BERT-RPC's synchronous `call` request type. Some operations have no useful
 return value and can thus be used with the asynchronous `cast` request type;
-these operations can also be pipelined for increased performance.
+these operations can thus be pipelined for increased performance.
 
 ### `(rdf:graphs)`
 
@@ -239,9 +239,9 @@ Protocol Serialization
 ----------------------
 
 RDF values (blank nodes, URI references, and literals) are represented as
-BERT strings containing the values' canonical [N-Triples][] forms. RDF
-triples are represented as three-term BERT lists containing such BERT
-strings.
+BERT strings using the appropriate canonical [N-Triples][] lexical forms.
+RDF triples are represented as three-term BERT lists containing such BERT
+strings for the subject, predicate and object.
 
 ### Blank nodes
 
@@ -301,9 +301,9 @@ character:
 ### Language-tagged literals
 
 RDF literals that have an accompanying language tag are serialized on the
-wire as BERT strings just like plain literals (see above), but contain the
-added language tag at the end of the string, after the concluding `'"'`
-(double quote) character:
+wire as BERT strings just like plain literals, but contain the added
+language tag at the end of the string, after the concluding `'"'` (double
+quote) character:
 
     RDF::BERT.serialize("Hello, world!", :language => :en)
     #=> "\"Hello, world!\"@en"
@@ -320,9 +320,9 @@ added language tag at the end of the string, after the concluding `'"'`
 ### Datatyped literals
 
 RDF literals that have an accompanying datatype URI are serialized on the
-wire as BERT strings like plain literals (see above), but contain the added
-absolute datatype URI at the end of the string, after the concluding `'"'`
-(double quote) character:
+wire as BERT strings like plain literals, but contain the added absolute
+datatype URI at the end of the string, after the concluding `'"'` (double
+quote) character:
 
     RDF::BERT.serialize(3.1415)
     #=> "\"3.1415\"^^<http://www.w3.org/2001/XMLSchema#double>"
@@ -359,9 +359,9 @@ preceding sections.
 ### Triple patterns
 
 RDF triple patterns are serialized on the wire in the same way as are
-triples (see above), the only difference being that `nil`, represented in
-BERT as the `t[:bert, :nil]` tuple, is an allowed value in place of any of
-the list terms:
+triples, the only difference being that `nil`, represented in BERT as the
+`t[:bert, :nil]` tuple, is an allowed value in place of any of the list
+terms and is used to represent a wildcard matching any RDF value:
 
     RDF::BERT.serialize([nil, RDF.type, nil])
     #=> [nil, "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", nil]
