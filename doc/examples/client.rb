@@ -2,7 +2,7 @@
 $:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'lib')))
 require 'rdf/bert'
 
-repository = RDF::BERT::Client.new(:host => "localhost", :port => 9999)
+repository = RDF::BERT::Client.new(:host => "localhost", :port => 8000)
 
 repository.load("http://rdf.rubyforge.org/doap.nt")
 

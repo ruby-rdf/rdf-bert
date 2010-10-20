@@ -15,7 +15,7 @@ BERT-RPC Client Examples
 
 ### Connecting to a remote repository over BERT-RPC
 
-    repository = RDF::BERT::Client.new(:host => "localhost", :port => 9999)
+    repository = RDF::BERT::Client.new(:host => "localhost", :port => 8000)
 
 ### Obtaining information about the remote repository
 
@@ -63,7 +63,7 @@ examples will all use BERTREM.
 
     repository = RDF::Repository.new
 
-    RDF::BERT::Server.run(repository, :port => 9999)
+    RDF::BERT::Server.run(repository, :port => 8000)
 
 ### Serving an initially seeded in-memory repository over BERT-RPC
 
@@ -72,7 +72,7 @@ examples will all use BERTREM.
 
     repository = RDF::Repository.load('/path/to/data.nt')
 
-    RDF::BERT::Server.run(repository, :port => 9999)
+    RDF::BERT::Server.run(repository, :port => 8000)
 
 ### Proxying a local or remote Sesame HTTP repository over BERT-RPC
 
@@ -82,7 +82,7 @@ examples will all use BERTREM.
 
     sesame = RDF::Sesame::Server.new("http://localhost:8080/openrdf-sesame")
 
-    RDF::BERT::Server.run(sesame.repository(:SYSTEM), :port => 9999)
+    RDF::BERT::Server.run(sesame.repository(:SYSTEM), :port => 8000)
 
 Protocol Description
 --------------------

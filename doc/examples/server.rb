@@ -7,4 +7,4 @@ BERTREM::Server.log.level = Logger::DEBUG
 
 repository = RDF::Repository.new
 
-RDF::BERT::Server.run(repository, :port => 9999)
+RDF::BERT::Server.run(repository, :port => 8000)
