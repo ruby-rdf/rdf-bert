@@ -1,6 +1,7 @@
 require 'rdf'
 require 'rdf/ntriples'
 require 'bertrpc'
+require 'rdf/bert/extensions'
 
 module RDF
   module BERT
