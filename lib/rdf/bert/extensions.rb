@@ -1,4 +1,12 @@
 ##
+# Extensions for `nil`.
+class NilClass
+  def to_bert
+    self
+  end
+end
+
+##
 # Extensions for RDF values.
 module RDF::Value
   def to_bert

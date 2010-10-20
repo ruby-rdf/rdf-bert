@@ -8,8 +8,11 @@ module RDF
     autoload :Server,  'rdf/bert/server'
     autoload :VERSION, 'rdf/bert/version'
 
+    DEFAULT_PORT = 8000
+
     ##
     # @param  [String] value
+    # @param  [Hash{Symbol => Object}] options
     # @return [String]
     def self.encode(value, options = {})
       ::BERT.encode(serialize(value, options))
@@ -17,9 +20,11 @@ module RDF
 
     ##
     # @param  [Object] value
-    # @return [String]
+    # @param  [Hash{Symbol => Object}] options
+    # @return [Object]
     def self.serialize(value, options = {})
       case value
+        when nil        then nil
         when Array      then RDF::Statement(*value).to_bert
         when RDF::Value then value.to_bert
         else RDF::Literal(value, options).to_bert
@@ -38,18 +43,20 @@ module RDF
     # @return [RDF::Value]
     def self.unserialize(value)
       case value
+        when nil then nil
         when :f, :t, FalseClass, TrueClass, Integer, Float
           RDF::Literal(value)
         when Array, ::BERT::Tuple
           case tag = value.first
             when :'3' then RDF::Statement(*value[1..3].map { |term| unserialize(term) })
-            when :'4' then RDF::Statement(*value[1..3].map { |term| unserialize(term) }, :context => unserialize(value[4])) # FIXME on Ruby 1.8
+            #when :'4' then RDF::Statement(*value[1..3].map { |term| unserialize(term) }, :context => unserialize(value[4])) # FIXME on Ruby 1.8
             when :'?' then RDF::Query::Variable.new(value[1])
             when :':' then RDF::Node(value[1])
             when :'<' then RDF::URI(value[1])
             when :'"' then RDF::Literal(value[1])
             when :'@' then RDF::Literal(value[1], :language => value[2])
             when :'^' then RDF::Literal(value[1], :datatype => value[2])
+            else value # FIXME
           end
         else
           raise ArgumentError, "invalid RDF/BERT value: #{value.inspect}"
