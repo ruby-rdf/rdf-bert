@@ -119,6 +119,8 @@ Preston-Werner's RubyConf 2009 presentation and the related blog posts:
 Protocol Operations
 -------------------
 
+_Note: this section has not yet been updated for RDF::BERT 0.2.x._
+
 The following functions are all specified in the BERT-RPC `rdf` module and
 are thus shown accordingly prefixed. Function signatures are depicted in
 [S-expression][] syntax where e.g. `(foo:bar 1 (2) "3")` is equivalent to
@@ -237,6 +239,8 @@ operation for BERT-RPC's asynchronous `cast` request type.
 
 Protocol Serialization
 ----------------------
+
+_Note: this section has not yet been updated for RDF::BERT 0.2.x._
 
 RDF values (blank nodes, URI references, and literals) are represented as
 BERT strings using the appropriate canonical [N-Triples][] lexical forms.
@@ -391,13 +395,13 @@ Dependencies
 
 * [RDF.rb](http://rubygems.org/gems/rdf) (>= 0.2.3)
 * [BERT-RPC](http://rubygems.org/gems/bertrpc) (>= 1.3.0) for RPC client usage
-* [BERTREM][] (>= 0.0.7) or [Ernie][] for RPC server usage
+* [BERTREM][] (>= 0.0.7) or [Ernie][] (>= 2.4.0) for RPC server usage
 
 Installation
 ------------
 
-The recommended installation method is via RubyGems. To install the latest
-official release, do:
+The recommended installation method is via [RubyGems](http://rubygems.org/).
+To install the latest official release of `RDF::BERT`, do:
 
     % [sudo] gem install rdf-bert
 
@@ -413,16 +417,16 @@ as follows:
 
     % wget http://github.com/bendiken/rdf-bert/tarball/master
 
-Authors
--------
+Author
+------
 
 * [Arto Bendiken](mailto:arto.bendiken@gmail.com) - <http://ar.to/>
 
 License
 -------
 
-`RDF::BERT` is free and unencumbered public domain software. For more
-information, see <http://unlicense.org/> or the accompanying UNLICENSE file.
+This is free and unencumbered public domain software. For more information,
+see <http://unlicense.org/> or the accompanying {file:UNLICENSE} file.
 
 [RDF.rb]:          http://rdf.rubyforge.org/
 [RDF::Repository]: http://rdf.rubyforge.org/RDF/Repository.html
