@@ -1,12 +1,11 @@
 module RDF; module BERT
   module VERSION
     MAJOR = 0
-    MINOR = 1
+    MINOR = 2
     TINY  = 0
     EXTRA = nil
 
-    STRING = [MAJOR, MINOR, TINY].join('.')
-    STRING << ".#{EXTRA}" if EXTRA
+    STRING = [MAJOR, MINOR, TINY, EXTRA].compact.join('.')
 
     ##
     # @return [String]
