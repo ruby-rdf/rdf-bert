@@ -10,67 +10,35 @@ module RDF
     autoload :VERSION, 'rdf/bert/version'
 
     ##
+    # @param  [String] value
+    # @return [String]
     def self.encode(value, options = {})
       ::BERT.encode(serialize(value, options))
     end
 
     ##
+    # @param  [Object] value
+    # @return [String]
     def self.serialize(value, options = {})
       case value
-        when Array
-          serialize_triple(value)
-        when RDF::Statement
-          serialize_statement(value)
-        when RDF::Value
-          serialize_value(value)
-        else
-          serialize_value(RDF::Literal.new(value, options))
+        when Array      then RDF::Statement.new(*value).to_bert
+        when RDF::Value then value.to_bert
+        else RDF::Literal.new(value, options).to_bert
       end
     end
 
     ##
-    def self.serialize_statement(statement)
-      [serialize_value(statement.context), serialize_triple(statement.to_triple)]
-    end
-
-    ##
-    def self.serialize_triple(triple)
-      triple.map { |value| serialize_value(value) }
-    end
-
-    ##
-    def self.serialize_value(value)
-      RDF::NTriples::Writer.serialize(value)
-    end
-
-    ##
+    # @param  [String] data
+    # @return [RDF::Value]
     def self.decode(data)
       unserialize(::BERT.decode(data))
     end
 
     ##
+    # @param  [Object] value
+    # @return [RDF::Value]
     def self.unserialize(value)
-      case value
-        when Array
-          unserialize_triple(value)
-        else
-          unserialize_value(value)
-      end
-    end
-
-    ##
-    def self.unserialize_statement(triple, options = {})
-      RDF::Statement.new(*(unserialize_triple(triple) + [options]))
-    end
-
-    ##
-    def self.unserialize_triple(triple)
-      triple.map { |value| unserialize_value(value) }
-    end
-
-    ##
-    def self.unserialize_value(value)
-      value ? RDF::NTriples::Reader.unserialize(value) : nil # TODO: fixed in RDF.rb 0.1.4
+      raise NotImplementedError, "RDF/BERT unserialization not yet implemented" # TODO
     end
   end
 end
