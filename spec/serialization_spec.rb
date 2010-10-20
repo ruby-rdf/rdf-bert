@@ -2,52 +2,64 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe RDF::BERT do
   EXAMPLES = {
-    :bnode => {:in => RDF::Node.new(id = 'foobar'), :out => "_:#{id}"},
-    :uri   => {:in => RDF::URI.new(uri = RDF::DC.title.to_s), :out => "<#{uri}>"},
-    :lit1  => {:in => RDF::Literal.new(text = 'Hello'), :out => "\"#{text}\""},
+    'variables' => [
+      [RDF::Query::Variable.new(id = :foo),
+       BERT::Tuple[:'?', id.to_sym]],
+    ],
+    'blank nodes' => [
+      [RDF::Node(id = :foobar),
+       BERT::Tuple[:':', id.to_sym]],
+    ],
+    'URIs' => [
+      [RDF::URI(uri = RDF::DC.title.to_s),
+       BERT::Tuple[:'<', uri.to_s]],
+    ],
+    'plain literals' => [
+      [RDF::Literal(text = 'Hello'),
+       BERT::Tuple[:'"', text.to_s]],
+    ],
+    'language-tagged literals' => [
+      [RDF::Literal(text = 'Hello', :language => (lang = :en)),
+       BERT::Tuple[:'@', text.to_s, lang.to_sym]],
+    ],
+    'datatyped literals' => [
+      [RDF::Literal(text = 'Hello', :datatype => (type = RDF::XSD.string)),
+       BERT::Tuple[:'^', text.to_s, type.to_s]],
+    ],
+    'triples' => [
+      [RDF::Statement(s = RDF::Node.new, p = RDF.type, o = RDF::FOAF.Person),
+       BERT::Tuple[:'3',
+         BERT::Tuple[:':', s.to_sym],
+         BERT::Tuple[:'<', p.to_s],
+         BERT::Tuple[:'<', o.to_s]]]
+    ],
+    'quads' => [
+      [RDF::Statement(s = RDF::Node.new, p = RDF.type, o = RDF::FOAF.Person, :context => (c = RDF::Node.new)),
+       BERT::Tuple[:'4',
+         BERT::Tuple[:':', s.to_sym],
+         BERT::Tuple[:'<', p.to_s],
+         BERT::Tuple[:'<', o.to_s],
+         BERT::Tuple[:':', c.to_sym]]]
+    ],
   }
 
-  context "serializing into BERT" do
-    it "should serialize blank nodes" do
-      RDF::BERT.serialize_value(EXAMPLES[:bnode][:in]).should == EXAMPLES[:bnode][:out]
-    end
-
-    it "should serialize URIs" do
-      RDF::BERT.serialize_value(EXAMPLES[:uri][:in]).should == EXAMPLES[:uri][:out]
-    end
-
-    it "should serialize literals" do
-      RDF::BERT.serialize_value(EXAMPLES[:lit1][:in]).should == EXAMPLES[:lit1][:out]
-    end
-
-    it "should serialize triples" do
-      # TODO
-    end
-
-    it "should serialize statements" do
-      # TODO
+  context "serializing into RDF/BERT" do
+    EXAMPLES.each do |example_type, examples|
+      examples.each do |(example_input, example_output)|
+        it "should serialize #{example_type}" do
+          RDF::BERT.serialize(example_input).should == example_output
+        end
+      end
     end
   end
 
-  context "unserializing from BERT" do
-    it "should unserialize blank nodes" do
-      RDF::BERT.unserialize_value(EXAMPLES[:bnode][:out]).should == EXAMPLES[:bnode][:in]
-    end
-
-    it "should unserialize URIs" do
-      RDF::BERT.unserialize_value(EXAMPLES[:uri][:out]).should == EXAMPLES[:uri][:in]
-    end
-
-    it "should unserialize literals" do
-      RDF::BERT.unserialize_value(EXAMPLES[:lit1][:out]).should == EXAMPLES[:lit1][:in]
-    end
-
-    it "should unserialize triples" do
-      # TODO
-    end
-
-    it "should unserialize statements" do
-      # TODO
+  context "unserializing from RDF/BERT" do
+    EXAMPLES.each do |example_type, examples|
+      examples.each do |(example_output, example_input)|
+        it "should unserialize #{example_type}" do
+          RDF::BERT.unserialize(example_input).should == example_output
+        end
+      end
     end
   end
 end
