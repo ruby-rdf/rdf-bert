@@ -1,5 +1,5 @@
 ##
-# RDF/BERT extensions for RDF values.
+# Extensions for RDF values.
 module RDF::Value
   def to_bert
     raise NotImplementedError, "#{self.class}#to_bert"
@@ -7,7 +7,7 @@ module RDF::Value
 end
 
 ##
-# RDF/BERT extensions for statements.
+# Extensions for statements.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html
 class RDF::Statement
@@ -21,7 +21,7 @@ class RDF::Statement
 end
 
 ##
-# RDF/BERT extensions for variables.
+# Extensions for variables.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html
 class RDF::Query::Variable
@@ -31,7 +31,7 @@ class RDF::Query::Variable
 end
 
 ##
-# RDF/BERT extensions for blank nodes.
+# Extensions for blank nodes.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html
 class RDF::Node
@@ -41,7 +41,7 @@ class RDF::Node
 end
 
 ##
-# RDF/BERT extensions for URIs.
+# Extensions for URIs.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html
 class RDF::URI
@@ -51,7 +51,7 @@ class RDF::URI
 end
 
 ##
-# RDF/BERT extensions for RDF literals.
+# Extensions for RDF literals.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html
 class RDF::Literal
@@ -65,7 +65,7 @@ class RDF::Literal
 end
 
 ##
-# RDF/BERT extensions for boolean literals.
+# Extensions for boolean literals.
 #
 # Note: booleans are not encoded as BERT booleans (which are comparatively
 # inefficient), but rather simply as one-character atoms.
@@ -78,7 +78,7 @@ class RDF::Literal::Boolean
 end
 
 ##
-# RDF/BERT extensions for integer literals.
+# Extensions for integer literals.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html#SMALL_INTEGER_EXT
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html#INTEGER_EXT
@@ -91,12 +91,24 @@ class RDF::Literal::Integer
 end
 
 ##
-# RDF/BERT extensions for floating-point literals.
+# Extensions for floating-point literals.
 #
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html#FLOAT_EXT
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html#NEW_FLOAT_EXT
 class RDF::Literal::Double
   def to_bert
     to_f
+  end
+end
+
+##
+# Extensions for the BERT encoder.
+#
+# @see http://github.com/mojombo/bert/pull/10
+class BERT::Encode
+  alias_method :write_any_raw_without_to_bert, :write_any_raw
+  def write_any_raw(obj)
+    obj = obj.to_bert if obj.respond_to?(:to_bert)
+    write_any_raw_without_to_bert(obj)
   end
 end

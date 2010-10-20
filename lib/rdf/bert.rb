@@ -43,7 +43,7 @@ module RDF
         when Array, ::BERT::Tuple
           case tag = value.first
             when :'3' then RDF::Statement(*value[1..3].map { |term| unserialize(term) })
-            when :'4' then RDF::Statement(*value[1..3].map { |term| unserialize(term) }, :context => unserialize(value[4]))
+            when :'4' then RDF::Statement(*value[1..3].map { |term| unserialize(term) }, :context => unserialize(value[4])) # FIXME on Ruby 1.8
             when :'?' then RDF::Query::Variable.new(value[1])
             when :':' then RDF::Node(value[1])
             when :'<' then RDF::URI(value[1])
