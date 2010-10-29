@@ -6,7 +6,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.date               = File.mtime('VERSION').strftime('%Y-%m-%d')
 
   gem.name               = 'rdf-bert'
-  gem.homepage           = 'http://rdf.rubyforge.org/'
+  gem.homepage           = 'http://rdf.rubyforge.org/bert/'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
   gem.summary            = 'BERT-RPC repository proxy for RDF.rb.'
   gem.description        = 'RDF.rb plugin for proxying repository operations over the Erlang-compatible BERT-RPC binary protocol.'
