@@ -240,146 +240,211 @@ operation for BERT-RPC's asynchronous `cast` request type.
 Protocol Serialization
 ----------------------
 
-_Note: this section has not yet been updated for RDF::BERT 0.2.x._
+_Note: this section is in the process of being updated for RDF::BERT 0.2.x._
 
-RDF values (blank nodes, URI references, and literals) are represented as
-BERT strings using the appropriate canonical [N-Triples][] lexical forms.
-RDF triples are represented as three-term BERT lists containing such BERT
-strings for the subject, predicate and object.
+### Variables
+
+Query variables are serialized on the wire as BERT tuples of the form
+`t[:'?', variable.name.to_sym]`:
+
+    RDF::BERT.serialize(RDF::Query::Variable.new(:subject))
+    #=> t[:"?", :subject]
+    
+    RDF::BERT.encode(RDF::Query::Variable.new(:subject))
+    #=> "\x83h\x02d\x00\x01?d\x00\asubject"
+    
+    RDF::BERT.unserialize(t[:"?", :subject])
+    #=> #<RDF::Query::Variable(?subject)>
+    
+    RDF::BERT.decode("\x83h\x02d\x00\x01?d\x00\asubject")
+    #=> #<RDF::Query::Variable(?subject)>
 
 ### Blank nodes
 
-Blank nodes are serialized on the wire as BERT strings of the form
-`"_:[A-Za-z][A-Za-z0-9]*"`:
+Blank nodes are serialized on the wire as BERT tuples of the form
+`t[:':', node.id.to_sym]`:
 
-    RDF::BERT.serialize(RDF::Node.new)
-    #=> "_:g2165237140"
+    RDF::BERT.serialize(RDF::Node.new(:foobar))
+    #=> t[:":", :foobar]
     
-    RDF::BERT.encode(RDF::Node.new)
-    #=> "\203m\000\000\000\r_:g2165237140"
+    RDF::BERT.encode(RDF::Node.new(:foobar))
+    #=> "\x83h\x02d\x00\x01:d\x00\x06foobar"
     
-    RDF::BERT.unserialize("_:g2165237140")
-    #=> #<RDF::Node(_:g2165237140)>
+    RDF::BERT.unserialize(t[:":", :foobar])
+    #=> #<RDF::Node(_:foobar)>
     
-    RDF::BERT.decode("\203m\000\000\000\r_:g2165237140")
-    #=> #<RDF::Node(_:g2165237140)>
+    RDF::BERT.decode("\x83h\x02d\x00\x01:d\x00\x06foobar")
+    #=> #<RDF::Node(_:foobar)>
 
 ### URI references
 
-URI references are serialized on the wire as BERT strings that begin with an
-initial `'<'` character, are followed by the string representation of the
-URI reference, and are terminated by a final `'>'` character:
+URI references are serialized on the wire as BERT tuples of the form
+`t[:'<', uri.to_s]`:
 
-    RDF::BERT.serialize(RDF::URI.new("http://rdf.rubyforge.org/"))
-    #=> "<http://rdf.rubyforge.org/>"
+    RDF::BERT.serialize(RDF::URI("http://rdf.rubyforge.org/"))
+    #=> t[:<, "http://rdf.rubyforge.org/"]
     
-    RDF::BERT.encode(RDF::URI.new("http://rdf.rubyforge.org/"))
-    #=> "\203m\000\000\000\e<http://rdf.rubyforge.org/>"
+    RDF::BERT.encode(RDF::URI("http://rdf.rubyforge.org/"))
+    #=> "\x83h\x02d\x00\x01<m\x00\x00\x00\x19http://rdf.rubyforge.org/"
     
-    RDF::BERT.unserialize("<http://rdf.rubyforge.org/>")
+    RDF::BERT.unserialize(t[:<, "http://rdf.rubyforge.org/"])
     #=> #<RDF::URI(http://rdf.rubyforge.org/)>
     
-    RDF::BERT.decode("\203m\000\000\000\e<http://rdf.rubyforge.org/>")
+    RDF::BERT.decode("\x83h\x02d\x00\x01<m\x00\x00\x00\x19http://rdf.rubyforge.org/")
     #=> #<RDF::URI(http://rdf.rubyforge.org/)>
 
 ### Plain literals
 
-RDF string literals that do not have an accompanying language tag or
-datatype URI are serialized on the wire as BERT strings that begin with an
-initial `'"'` (double quote) character, are followed by the N-Triples
-escaped form of the string literal, and are terminated by a final `'"'`
-character:
+RDF literals that do not have an accompanying language tag or datatype URI
+are serialized on the wire as BERT tuples of the form
+`t[:'"', literal.value.to_s]`:
 
     RDF::BERT.serialize("Hello, world!")
-    #=> "\"Hello, world!\""
+    #=> t[:"\"", "Hello, world!"]
     
     RDF::BERT.encode("Hello, world!")
-    #=> "\203m\000\000\000\017\"Hello, world!\""
+    #=> "\x83h\x02d\x00\x01\"m\x00\x00\x00\rHello, world!"
     
-    RDF::BERT.unserialize("\"Hello, world!\"")
+    RDF::BERT.unserialize(t[:"\"", "Hello, world!"])
     #=> #<RDF::Literal("Hello, world!")>
     
-    RDF::BERT.decode("\203m\000\000\000\017\"Hello, world!\"")
+    RDF::BERT.decode("\x83h\x02d\x00\x01\"m\x00\x00\x00\rHello, world!")
     #=> #<RDF::Literal("Hello, world!")>
 
 ### Language-tagged literals
 
 RDF literals that have an accompanying language tag are serialized on the
-wire as BERT strings just like plain literals, but contain the added
-language tag at the end of the string, after the concluding `'"'` (double
-quote) character:
+wire as BERT tuples of the form
+`t[:'@', literal.value.to_s, literal.language.to_sym]`:
 
     RDF::BERT.serialize("Hello, world!", :language => :en)
-    #=> "\"Hello, world!\"@en"
+    #=> t[:"@", "Hello, world!", :en]
     
     RDF::BERT.encode("Hello, world!", :language => :en)
-    #=> "\203m\000\000\000\022\"Hello, world!\"@en"
+    #=> "\x83h\x03d\x00\x01@m\x00\x00\x00\rHello, world!d\x00\x02en"
     
-    RDF::BERT.unserialize("\"Hello, world!\"@en")
+    RDF::BERT.unserialize(t[:"@", "Hello, world!", :en])
     #=> #<RDF::Literal("Hello, world!"@en)>
     
-    RDF::BERT.decode("\203m\000\000\000\022\"Hello, world!\"@en")
+    RDF::BERT.decode("\x83h\x03d\x00\x01@m\x00\x00\x00\rHello, world!d\x00\x02en")
     #=> #<RDF::Literal("Hello, world!"@en)>
 
 ### Datatyped literals
 
 RDF literals that have an accompanying datatype URI are serialized on the
-wire as BERT strings like plain literals, but contain the added absolute
-datatype URI at the end of the string, after the concluding `'"'` (double
-quote) character:
+wire as BERT tuples of the form
+`t[:'^', literal.value.to_s, literal.datatype.to_s]`:
+
+    RDF::BERT.serialize("Hello, world!", :datatype => RDF::XSD.string)
+    #=> t[:^, "Hello, world!", "http://www.w3.org/2001/XMLSchema#string"]
+    
+    RDF::BERT.encode("Hello, world!", :datatype => RDF::XSD.string)
+    #=> "\x83h\x03d\x00\x01^m\x00\x00\x00\rHello, world!m\x00\x00\x00'http://www.w3.org/2001/XMLSchema#string"
+    
+    RDF::BERT.unserialize(t[:^, "Hello, world!", "http://www.w3.org/2001/XMLSchema#string"])
+    #=> #<RDF::Literal("Hello, world!"^^<http://www.w3.org/2001/XMLSchema#string>)>
+    
+    RDF::BERT.decode("\x83h\x03d\x00\x01^m\x00\x00\x00\rHello, world!m\x00\x00\x00'http://www.w3.org/2001/XMLSchema#string")
+    #=> #<RDF::Literal("Hello, world!"^^<http://www.w3.org/2001/XMLSchema#string>)>
+
+However, as a special case due to efficiency considerations, datatyped
+literals having the datatypes `xsd:boolean`, `xsd:integer`, or `xsd:double`
+are serialized into their direct BERT equivalents, as described in the
+following sections.
+
+#### Boolean literals
+
+RDF boolean literals, i.e. literals having the datatype `xsd:boolean`,
+are serialized on the wire as the BERT atoms `:t` and `:f`:
+
+    RDF::BERT.serialize(true)
+    #=> :t
+    
+    RDF::BERT.encode(true)
+    #=> "\x83d\x00\x01t"
+    
+    RDF::BERT.unserialize(:t)
+    #=> #<RDF::Literal::Boolean("true"^^<http://www.w3.org/2001/XMLSchema#boolean>)>
+    
+    RDF::BERT.decode("\x83d\x00\x01t")
+    #=> #<RDF::Literal::Boolean("true"^^<http://www.w3.org/2001/XMLSchema#boolean>)>
+
+#### Integer literals
+
+RDF integer literals, i.e. literals having the datatype `xsd:integer`, are
+serialized on the wire as BERT integers:
+
+    RDF::BERT.serialize(42)
+    #=> 42
+    
+    RDF::BERT.encode(42)
+    #=> "\x83a*"
+    
+    RDF::BERT.unserialize(42)
+    #=> #<RDF::Literal::Integer("42"^^<http://www.w3.org/2001/XMLSchema#integer>)>
+    
+    RDF::BERT.decode("\x83a*")
+    #=> #<RDF::Literal::Integer("42"^^<http://www.w3.org/2001/XMLSchema#integer>)>
+
+#### Floating-point literals
+
+RDF floating-point literals, i.e. literals having the datatype `xsd:double`,
+are serialized on the wire as BERT double-precision floats:
 
     RDF::BERT.serialize(3.1415)
-    #=> "\"3.1415\"^^<http://www.w3.org/2001/XMLSchema#double>"
+    #=> 3.1415
     
     RDF::BERT.encode(3.1415)
-    #=> "\203m\000\000\0003\"3.1415\"^^<http://www.w3.org/2001/XMLSchema#double>"
+    #=> "\x83F@\t!\xCA\xC0\x83\x12o"
     
-    RDF::BERT.unserialize("\"3.1415\"^^<http://www.w3.org/2001/XMLSchema#double>")
-    #=> #<RDF::Literal("3.1415"^^<http://www.w3.org/2001/XMLSchema#double>)>
+    RDF::BERT.unserialize(3.1415)
+    #=> #<RDF::Literal::Double("3.1415"^^<http://www.w3.org/2001/XMLSchema#double>)>
     
-    RDF::BERT.decode("\203m\000\000\0003\"3.1415\"^^<http://www.w3.org/2001/XMLSchema#double>")
-    #=> #<RDF::Literal("3.1415"^^<http://www.w3.org/2001/XMLSchema#double>)>
+    RDF::BERT.decode("\x83F@\t!\xCA\xC0\x83\x12o")
+    #=> #<RDF::Literal::Double("3.1415"^^<http://www.w3.org/2001/XMLSchema#double>)>
 
 ### Triples
 
-RDF triples are serialized on the wire as three-term BERT lists of the form
-`[subject, predicate, object]`, where each term is a BERT string containing
-the N-Triples representation of the given value, as described in the
-preceding sections.
+RDF triples are serialized on the wire as BERT tuples of the form:
+`[:'3', subject, predicate, object]`, where each term is a BERT value or
+tuple in accordance with the serialization described in the preceding
+sections:
 
     RDF::BERT.serialize([RDF::Node.new(:foobar), RDF::DC.title, "Foobar"])
-    #=> ["_:foobar", "<http://purl.org/dc/terms/title>", "\"Foobar\""]
+    #=> t[:"3", t[:":", :foobar], t[:<, "http://purl.org/dc/terms/title"], t[:"\"", "Foobar"]]
     
     RDF::BERT.encode([RDF::Node.new(:foobar), RDF::DC.title, "Foobar"])
-    #=> "\203l\000\000\000\003m\000\000\000\b_:foobar" +
-    #   "m\000\000\000 <http://purl.org/dc/terms/title>m\000\000\000\b\"Foobar\"j"
+    #=> "\x83h\x04d\x00\x013h" + 
+    #   "\x02d\x00\x01:d\x00\x06foobarh" +
+    #   "\x02d\x00\x01<m\x00\x00\x00\x1Ehttp://purl.org/dc/terms/titleh" + 
+    #   "\x02d\x00\x01\"m\x00\x00\x00\x06Foobar"
     
-    RDF::BERT.unserialize(["_:foobar", "<http://purl.org/dc/terms/title>", "\"Foobar\""])
-    #=> [#<RDF::Node(_:foobar)>, #<RDF::URI(http://purl.org/dc/terms/title)>, #<RDF::Literal("Foobar")>]
+    RDF::BERT.unserialize(t[:"3", t[:":", :foobar], t[:<, "http://purl.org/dc/terms/title"], t[:"\"", "Foobar"]])
+    #=> #<RDF::Statement(_:foobar <http://purl.org/dc/terms/title> "Foobar" .)>
     
-    RDF::BERT.decode("\203l\000\000\000\003m\000\000\000\b_:foobar"...)
-    #=> [#<RDF::Node(_:foobar)>, #<RDF::URI(http://purl.org/dc/terms/title)>, #<RDF::Literal("Foobar")>]
+    RDF::BERT.decode("\x83h\x04d\x00\x013h\x02d\x00\x01:d\x00\x06foobarh"...)
+    #=> #<RDF::Statement(_:foobar <http://purl.org/dc/terms/title> "Foobar" .)>
 
 ### Triple patterns
 
 RDF triple patterns are serialized on the wire in the same way as are
-triples, the only difference being that `nil`, represented in BERT as the
-`t[:bert, :nil]` tuple, is an allowed value in place of any of the list
-terms and is used to represent a wildcard matching any RDF value:
+triples, the only difference being that query variables and `nil`,
+represented in BERT as the `t[:bert, :nil]` tuple, are allowed values in
+place of any of the terms and are used for wildcard matching:
 
     RDF::BERT.serialize([nil, RDF.type, nil])
-    #=> [nil, "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", nil]
+    #=> t[:"3", nil, t[:<, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"], nil]
     
     RDF::BERT.encode([nil, RDF.type, nil])
-    #=> "\203l\000\000\000\003h\002d\000\004bertd\000\003nil" +
-    #   "m\000\000\0001<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>" +
-    #   "h\002d\000\004bertd\000\003nilj"
+    #=> "\x83h\x04d\x00\x013h\x02d\x00\x04bertd\x00\x03nilh" +
+    #   "\x02d\x00\x01<m\x00\x00\x00/http://www.w3.org/1999/02/22-rdf-syntax-ns#typeh" +
+    #   "\x02d\x00\x04bertd\x00\x03nil"
     
-    RDF::BERT.unserialize([nil, "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>", nil])
-    #=> [nil, #<RDF::URI(http://www.w3.org/1999/02/22-rdf-syntax-ns#type)>, nil]
+    RDF::BERT.unserialize(t[:"3", nil, t[:<, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"], nil])
+    #=> #<RDF::Statement(nil <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nil .)>
     
-    RDF::BERT.decode("\203l\000\000\000\003h\002d\000\004bertd\000\003nil"...)
-    #=> [nil, #<RDF::URI(http://www.w3.org/1999/02/22-rdf-syntax-ns#type)>, nil]
+    RDF::BERT.decode("\x83h\x04d\x00\x013h\x02d\x00\x04bertd\x00\x03nilh"...)
+    #=> #<RDF::Statement(nil <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> nil .)>
 
 Documentation
 -------------
@@ -420,7 +485,7 @@ as follows:
 Author
 ------
 
-* [Arto Bendiken](mailto:arto.bendiken@gmail.com) - <http://ar.to/>
+* [Arto Bendiken](http://github.com/bendiken) - <http://ar.to/>
 
 License
 -------
