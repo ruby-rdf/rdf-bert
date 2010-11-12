@@ -26,6 +26,13 @@ describe RDF::BERT do
       [RDF::Literal(text = 'Hello', :datatype => (type = RDF::XSD.string)),
        BERT::Tuple[:'^', text.to_s, type.to_s]],
     ],
+    'xsd:double literals' => [
+      [RDF::Literal(3.1415), 3.1415],
+    ],
+    'xsd:float literals' => [
+      [RDF::Literal(3.1415, :datatype => RDF::XSD.float),
+       BERT::Tuple[:'^', '3.1415', RDF::XSD.float.to_s]],
+    ],
     'triples' => [
       [RDF::Statement(s = RDF::Node.new, p = RDF.type, o = RDF::FOAF.Person),
        BERT::Tuple[:'3',

@@ -105,6 +105,9 @@ end
 # @see http://erlang.org/doc/apps/erts/erl_ext_dist.html#NEW_FLOAT_EXT
 class RDF::Literal::Double
   def to_bert
-    to_f
+    case datatype
+      when RDF::XSD.double then to_f
+      else super
+    end
   end
 end
