@@ -466,7 +466,7 @@ Installation
 ------------
 
 The recommended installation method is via [RubyGems](http://rubygems.org/).
-To install the latest official release of `RDF::BERT`, do:
+To install the latest official release of the `RDF::BERT` gem, do:
 
     % [sudo] gem install rdf-bert
 
@@ -477,15 +477,25 @@ To get a local working copy of the development repository, do:
 
     % git clone git://github.com/bendiken/rdf-bert.git
 
-Alternatively, you can download the latest development version as a tarball
-as follows:
+Alternatively, download the latest development version as a tarball as
+follows:
 
     % wget http://github.com/bendiken/rdf-bert/tarball/master
+
+Mailing List
+------------
+
+* <http://lists.w3.org/Archives/Public/public-rdf-ruby/>
 
 Author
 ------
 
 * [Arto Bendiken](http://github.com/bendiken) - <http://ar.to/>
+
+Contributors
+------------
+
+Refer to the accompanying {file:CREDITS} file.
 
 License
 -------
