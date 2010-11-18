@@ -458,7 +458,7 @@ Documentation
 Dependencies
 ------------
 
-* [RDF.rb](http://rubygems.org/gems/rdf) (>= 0.2.3)
+* [RDF.rb](http://rubygems.org/gems/rdf) (>= 0.3.0)
 * [BERT-RPC](http://rubygems.org/gems/bertrpc) (>= 1.3.0) for RPC client usage
 * [BERTREM][] (>= 0.0.7) or [Ernie][] (>= 2.4.0) for RPC server usage
 
