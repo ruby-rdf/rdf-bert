@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.rubyforge_project  = 'rdf'
 
   gem.author             = 'Arto Bendiken'
-  gem.email              = 'arto.bendiken@gmail.com'
+  gem.email              = 'public-rdf-ruby@w3.org'
 
   gem.platform           = Gem::Platform::RUBY
   gem.files              = %w(AUTHORS CREDITS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
@@ -28,9 +28,9 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version      = '>= 1.8.1'
   gem.requirements               = []
   gem.add_runtime_dependency     'bertrpc',   '>= 1.3.0'
-  gem.add_runtime_dependency     'rdf',       '= 0.3.0.pre'
+  gem.add_runtime_dependency     'rdf',       '~> 0.3.0'
   gem.add_development_dependency 'yard' ,     '>= 0.6.0'
-  gem.add_development_dependency 'rspec',     '>= 1.3.0'
-  gem.add_development_dependency 'rdf-spec',  '= 0.3.0.pre'
+  gem.add_development_dependency 'rspec',     '>= 2.1.0'
+  gem.add_development_dependency 'rdf-spec',  '~> 0.3.0'
   gem.post_install_message       = nil
 end

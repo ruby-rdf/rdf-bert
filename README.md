@@ -119,7 +119,7 @@ Preston-Werner's RubyConf 2009 presentation and the related blog posts:
 Protocol Operations
 -------------------
 
-_Note: this section has not yet been updated for RDF::BERT 0.2.x._
+_Note: this section has not yet been updated for RDF::BERT 0.3.x._
 
 The following functions are all specified in the BERT-RPC `rdf` module and
 are thus shown accordingly prefixed. Function signatures are depicted in
@@ -240,7 +240,7 @@ operation for BERT-RPC's asynchronous `cast` request type.
 Protocol Serialization
 ----------------------
 
-_Note: this section is in the process of being updated for RDF::BERT 0.2.x._
+_Note: this section is in the process of being updated for RDF::BERT 0.3.x._
 
 ### Variables
 
